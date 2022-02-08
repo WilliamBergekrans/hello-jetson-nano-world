@@ -30,4 +30,35 @@ int main( int argc, char** argv )
     imageNet* net = imageNet::Create(imageNet::GOOGLENET);
 
     // Check that the network is loaded properly 
+    if( !net ) 
+    {
+        printf("Failed to load the image recognition network\n");
+        return 0;
+    }
+
+    // Variable for storing confidence in a classification 
+    float confidence = 0.0; 
+
+    // Classify the image and return 
+    const int classIndex = net -> Classify(imgPtr, imgWidth, imgHeight, &confidence);
+
+    // Check that the classification is valid 
+    if (classIndex >= 0)
+    {
+        // Get the class description
+        const char* classDescrition = net -> GetClassDesc(classIndex);
+
+        // Print the classification results
+        printf("Image is recognized as '%s' (class #%i) with %f%% confidence\n", 
+                classDescrition, classIndex, confidence * 100.0f);
+    } 
+    else 
+    {
+        printf("Failed to classify the image\n");
+    }
+
+    // Need to return the objects and free CUDA resources 
+    delete net; 
+
+    return 0;
 }
